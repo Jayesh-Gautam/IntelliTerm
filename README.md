@@ -1,7 +1,3 @@
-Of course. Here is a professional and well-structured README for your GitHub project.
-
------
-
 # IntelliTerm: The Natural Language Terminal 🚀
 
 IntelliTerm is a smart command-line interface that allows you to execute shell commands by typing in plain English. Powered by the Groq API, it translates natural language requests into executable commands for both Windows (CMD) and Unix-like systems (Bash).
