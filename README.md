@@ -34,7 +34,7 @@ Follow these steps to get IntelliTerm running on your local machine.
 ### 1\. Clone the Repository
 
 ```bash
-git clone https://github.com/Jayesh-Gautam/IntelliTerm
+git clone https://github.com/Jayesh-Gautam/IntelliTerm.git
 cd IntelliTerm
 ```
 
