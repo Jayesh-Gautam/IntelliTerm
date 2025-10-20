@@ -1,42 +1,48 @@
 # IntelliTerm: The Natural Language Terminal 🚀
 
-IntelliTerm is a smart command-line interface that allows you to execute shell commands by typing in plain English. Powered by the Groq API, it translates natural language requests into executable commands for both Windows (CMD) and Unix-like systems (Bash).
 
-This project was developed as a practical application of concepts from an Operating Systems course, focusing on the shell, process management, and user-computer interaction.
 
-\![GIF of IntelliTerm in action]
-*(Consider adding a GIF here showing the terminal in action\!)*
+**IntelliTerm** is an intelligent, hybrid command-line interface that allows you to execute shell commands by typing in plain English. Powered by the Groq API for high-speed inference, it translates your natural language requests into executable commands for both Windows (CMD) and Unix-like systems (Bash).
 
------
+This project goes beyond a simple translator by creating a rich, interactive shell experience. It intelligently decides when to use AI and when to act as a traditional shell, giving you the best of both worlds.
+
+---
 
 ## 🌟 Features
 
-  * **Natural Language Processing**: Simply type what you want to do, like "create a new folder called 'docs'".
-  * **Cross-Platform Support**: Automatically detects your OS (Windows, macOS, or Linux) and generates the appropriate command.
-  * **Interactive Confirmation**: A built-in safety feature prompts you for confirmation before executing any command.
-  * **Clarification Handling**: If your request is ambiguous, the AI will ask for the information it needs to proceed.
-  * **Built-in `cd` Handling**: Correctly handles directory changes, a common challenge in custom shells.
+* **Natural Language Processing**: Simply type what you want to do, like *"create a new folder called 'docs'"* or *"find all text files in this directory"*.
 
------
+* **Polished Interactive UI**: All interactions, from command suggestions to clarification questions, are presented in a clean, professional, and consistent interface.
+
+* **Direct Command Execution**: IntelliTerm is a **hybrid shell**. It recognizes standard commands (like `dir`, `ls`, `git`, `pip`) and executes them immediately, bypassing the AI for maximum speed and familiar control.
+
+* **AI-Powered Editing**: Made a typo or changed your mind? The 'Edit' feature allows you to provide a correction in plain English (e.g., *"change the name to 'final_report'"*), and the AI will intelligently revise the command for you.
+
+* **Power User Mode**: For advanced users who prioritize speed, a special **Power User Mode** can be enabled. This mode executes all AI-generated commands instantly without requiring confirmation.
+
+* **Cross-Platform Support**: Automatically detects your OS (Windows, macOS, or Linux) and generates the appropriate command.
+
+* **Contextual Clarification**: If your request is ambiguous, the AI will ask for the necessary information in a structured prompt to ensure it gets the command right.
+
+---
 
 ## 🛠️ Technologies Used
 
-  * **Python 3**
-  * **Groq API** for fast Language Model inference.
-  * Standard Libraries: `os`, `platform`, `subprocess`, `json`
+* **Python 3**
+* **Groq API** for fast Language Model inference.
+* **Standard Libraries**: `os`, `platform`, `subprocess`, `json`
 
------
+---
 
 ## ⚙️ Setup and Installation
 
 Follow these steps to get IntelliTerm running on your local machine.
 
-### 1\. Clone the Repository
-
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/Jayesh-Gautam/IntelliTerm.git
 cd IntelliTerm
-```
+````
 
 ### 2\. Install Dependencies
 
@@ -60,9 +66,21 @@ pip install groq
 
 You need a Groq API key to use the service.
 
-1.  Get your free API key from the [Groq Console](https://console.groq.com/keys).
-2.  **(Recommended)** Set the key as an environment variable named `GROQ_API_KEY`.
-3.  Alternatively, you can hardcode the key by replacing `"gsk_..."` in the script, but this is not recommended for public repositories.
+1.  Get your free API key from the **[Groq Console](https://console.groq.com/keys)**.
+2.  Open the script and paste your key into the `API_KEY` variable.
+
+-----
+
+## 🔧 Configuration
+
+### Power User Mode
+
+IntelliTerm includes a special mode for advanced users that executes commands immediately without confirmation. To enable it, simply change the boolean variable at the top of the script:
+
+```python
+# Set to True to enable Power User Mode
+POWER_USER_MODE = True
+```
 
 -----
 
@@ -71,46 +89,71 @@ You need a Groq API key to use the service.
 Once you have completed the setup, run the script from your terminal:
 
 ```bash
-python intelliterm.py
+python IntelliTerm.py
 ```
 
-The application will start, and you can begin typing commands in natural language.
+The application will start, and you can begin typing commands.
 
 -----
 
 ## 📝 Example Usage
 
-Here are a few examples of how you can interact with IntelliTerm:
+### Example 1: Creating a File
 
-**Example 1: Creating a file**
-
-```
-C:\Users\You\Desktop> create a text file named notes
-Command: `type nul > notes.txt`
-What will happen: This command creates a new, empty file named 'notes.txt'.
-
-Press Enter to execute, or Ctrl+C to cancel...
-```
-
-**Example 2: Listing files**
+The AI suggests a command and waits for your confirmation.
 
 ```
-C:\Users\You\Desktop> show me all the files here
-Command: `dir`
-What will happen: This command lists all files and directories in the current folder.
+C:\Users\You> create a new empty file called report.docx
 
-Press Enter to execute, or Ctrl+C to cancel...
+┌─ AI-Powered Terminal ─────────────────────────────────────────────────────
+│
+│ Command:     type nul > report.docx
+│ Explanation: This command creates an empty file named 'report.docx'.
+│
+└──────────────────────────────────────────────────────────────────────────
+--> Execute? [Y]es, [N]o, [E]dit >
 ```
 
-**Example 3: Handling Ambiguity**
+### Example 2: AI-Powered Editing
+
+After getting a suggestion, you can ask the AI to modify it.
 
 ```
-C:\Users\You\Desktop> open the python file
-AI: Which Python file would you like to open? > my_script.py
-Command: `code my_script.py`
-What will happen: This command opens the file 'my_script.py' in Visual Studio Code.
+C:\Users\You> make a folder for my new project
 
-Press Enter to execute, or Ctrl+C to cancel...
+┌─ AI-Powered Terminal ─────────────────────────────────────────────────────
+│
+│ Command:     mkdir "new project"
+│ Explanation: This command creates a new directory named 'new project'.
+│
+└──────────────────────────────────────────────────────────────────────────
+--> Execute? [Y]es, [N]o, [E]dit > e
+--> Describe your change: actually, name it "Project Alpha"
+
+--> Asking AI to revise the command...
+
+┌─ AI-Powered Terminal ─────────────────────────────────────────────────────
+│
+│ Command:     mkdir "Project Alpha"
+│ Explanation: This command creates a new directory named 'Project Alpha'.
+│
+└──────────────────────────────────────────────────────────────────────────
+--> Execute? [Y]es, [N]o, [E]dit >
+```
+
+### Example 3: Handling Ambiguity
+
+The AI asks for more information in a clean, structured way.
+cl
+```
+C:\Users\You> I need to make a new item
+
+┌─ Clarification Needed ────────────────────────────────────────────────────
+│
+│ Please clarify whether you want to create a file or a folder.
+│
+└──────────────────────────────────────────────────────────────────────────
+--> Response: a file named 'config'
 ```
 
 -----
@@ -120,3 +163,6 @@ Press Enter to execute, or Ctrl+C to cancel...
   * **Command History**: Implement up/down arrow functionality to cycle through previous commands.
   * **Alias Support**: Allow users to define their own custom shortcuts.
   * **Tab Completion**: Add auto-completion for file and directory names.
+
+<!-- end list -->
+
