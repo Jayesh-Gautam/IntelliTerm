@@ -8,6 +8,7 @@ import json
 # IMPORTANT: Hardcoding keys is okay for personal projects, but for shared
 # or public code, using environment variables is more secure.
 API_KEY = "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" # Your key is placed here directly
+POWER_USER_MODE = True # Set to True to enable Power User Mode
 
 # This check ensures the key is not empty
 if not API_KEY:
@@ -20,6 +21,26 @@ if not API_KEY:
 
 client = Groq(api_key=API_KEY)
 
+def handle_execution(command):
+    """
+    Handles the actual execution of a command, including the special case for 'cd'.
+    Returns the new working directory if it changed, otherwise None.
+    """
+    if command.strip().lower().startswith("cd "):
+        try:
+            path = command.strip().split(" ", 1)[1]
+            if platform.system() == "Windows" and path.lower().startswith("/d "):
+                path = path[3:]
+            os.chdir(path)
+            return f"Current Directory: {os.getcwd()}"
+        except FileNotFoundError:
+            print(f"Error: Directory not found: {path}")
+        except IndexError:
+            print("Error: 'cd' command requires a directory path.")
+    else:
+        execute_command(command)
+    
+    return None
 def confirm_and_execute(original_prompt, command, explanation):
     """
     Displays the command, asks for confirmation (Y/N/E), and handles AI-powered edits.
@@ -85,6 +106,8 @@ def confirm_and_execute(original_prompt, command, explanation):
 
     # STEP 3: Execute the final, confirmed command
     print(f"--> Executing: `{current_command}`")
+    return handle_execution(current_command)
+
     if current_command.strip().lower().startswith("cd "):
         try:
             path = current_command.strip().split(" ", 1)[1]
@@ -295,9 +318,18 @@ def main():
 
             if ai_response.get("status") == "success":
                 command = ai_response.get("command")
-                explanation = ai_response.get("explanation")
+                
+                if POWER_USER_MODE:
+                    # In Power User Mode, execute directly without confirmation
+                    print(f"\n--> Power Mode: Executing...")
+                    print(f"    `{command}`")
+                    new_cwd = handle_execution(command)
+                else:
+                    # In Normal Mode, ask for confirmation as before
+                    explanation = ai_response.get("explanation")
+                    new_cwd = confirm_and_execute(prompt, command, explanation)
 
-                new_cwd = confirm_and_execute(prompt, command, explanation)
+                # Update conversation history if the directory changed
                 if new_cwd:
                     conversation_history = new_cwd
 
