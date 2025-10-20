@@ -7,7 +7,7 @@ import json
 # --- Configuration ---
 # IMPORTANT: Hardcoding keys is okay for personal projects, but for shared
 # or public code, using environment variables is more secure.
-API_KEY = "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" # Your key is placed here directly
+API_KEY = "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" # Your key is placed here directly
 
 # This check ensures the key is not empty
 if not API_KEY:
@@ -117,6 +117,26 @@ def execute_command(command):
     except Exception as e:
         print(f"\nAn unexpected error occurred: {e}")
 
+def is_direct_command(prompt):
+    """
+    Checks if the user's input is likely a direct command.
+    Returns True if it is, False otherwise.
+    """
+    # Get the first word of the prompt, converted to lowercase
+    first_word = prompt.strip().split(' ')[0].lower()
+
+    # A set of common commands for faster lookups
+    # You can easily add more commands to this list!
+    common_commands = {
+        # General
+        "cd", "dir", "ls", "mkdir", "rmdir", "del", "rm", "copy",
+        "move", "ren", "mv", "cls", "clear", "echo", "pwd",
+        # Package managers & tools
+        "pip", "git", "python", "code", "gcc", "node",
+    }
+
+    return first_word in common_commands
+
 
 def main():
     """Main application loop."""
@@ -133,6 +153,32 @@ def main():
             if prompt.lower() in ["exit", "quit"]:
                 break
 
+            # <<< START: New logic for direct command execution >>>
+            if is_direct_command(prompt):
+                print("--> Direct command detected. Executing...")
+                # Handle 'cd' command separately because it's a shell built-in
+                if prompt.strip().lower().startswith("cd "):
+                    try:
+                        path = prompt.strip().split(" ", 1)[1]
+                        
+                        # On Windows, 'cd /d D:\...' changes drive. os.chdir handles this.
+                        # The AI might add '/d ', but for direct commands we don't need to parse it.
+                        os.chdir(path)
+                        conversation_history = f"Current Directory: {os.getcwd()}" # Update CWD for AI
+                        print(f"Changed directory to: {os.getcwd()}")
+                    except FileNotFoundError:
+                        print(f"Error: Directory not found: {path}")
+                    except IndexError:
+                        print("Error: 'cd' command requires a directory path.")
+                else:
+                    # For all other direct commands, execute them right away
+                    execute_command(prompt)
+                
+                # After executing, restart the loop for the next prompt
+                continue 
+            # <<< END: New logic for direct command execution >>>
+
+            # If it's not a direct command, use the AI (this is your original logic)
             ai_response_str = get_ai_response(prompt, conversation_history)
             
             try:
@@ -143,18 +189,15 @@ def main():
 
             if ai_response.get("status") == "incomplete":
                 clarification_prompt = input(f"AI: {ai_response.get('question')} > ")
-                # Update conversation history and retry
                 conversation_history += f"\nUser: {prompt}\nAI: {ai_response.get('question')}\nUser: {clarification_prompt}"
                 prompt = f"Original request was '{prompt}'. The user provided this missing info: '{clarification_prompt}'"
                 
-                # Retry with the complete information
                 ai_response_str = get_ai_response(prompt, "") # Reset history for this turn
                 try:
                     ai_response = json.loads(ai_response_str)
                 except json.JSONDecodeError:
                     print(f"AI returned an invalid format on the second attempt. Please start over.\nRaw Response: {ai_response_str}")
                     continue
-
 
             if ai_response.get("status") == "success":
                 command = ai_response.get("command")
@@ -164,20 +207,17 @@ def main():
                 print(f"What will happen: {explanation}")
 
                 try:
-                    # Pause for user to press Enter to confirm, or Ctrl+C to cancel.
                     input("\nPress Enter to execute, or Ctrl+C to cancel... ")
                     
                     if command.strip().lower().startswith("cd "):
                         try:
-                            # Handle 'cd' separately as it's a shell built-in
                             path = command.strip().split(" ", 1)[1]
                             
-                            # On Windows, the AI might add '/d '. We need to remove it for os.chdir
                             if platform.system() == "Windows" and path.lower().startswith("/d "):
-                                path = path[3:] # Remove the '/d ' part
+                                path = path[3:]
 
                             os.chdir(path)
-                            conversation_history = f"Current Directory: {os.getcwd()}" # Update CWD for AI
+                            conversation_history = f"Current Directory: {os.getcwd()}"
                             print(f"Changed directory to: {os.getcwd()}")
                         except FileNotFoundError:
                             print(f"Error: Directory not found: {path}")
@@ -186,18 +226,16 @@ def main():
                     else:
                         execute_command(command)
                 except KeyboardInterrupt:
-                    # This catches Ctrl+C to cancel the current command execution
                     print("\nExecution cancelled.")
                     continue
 
             elif ai_response.get("status") == "error":
-                 print(f"An error occurred: {ai_response.get('message')}")
-
+                    print(f"An error occurred: {ai_response.get('message')}")
 
         except KeyboardInterrupt:
-            # This catches Ctrl+C from the main prompt to exit the program
             print("\nExiting IntelliTerm.")
             break
+
 
 
 if __name__ == "__main__":
