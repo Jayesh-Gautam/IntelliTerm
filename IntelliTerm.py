@@ -20,51 +20,86 @@ if not API_KEY:
 
 client = Groq(api_key=API_KEY)
 
-def confirm_and_execute(command, explanation):
+def confirm_and_execute(original_prompt, command, explanation):
     """
-    Displays the command in a formatted box and asks the user for confirmation (Yes/No/Edit).
+    Displays the command, asks for confirmation (Y/N/E), and handles AI-powered edits.
     """
-    print("\n┌─ AI-Powered Terminal " + "─" * 53)
-    print(f"│\n│ Command:     {command}")
-    print(f"│ Explanation: {explanation}\n│")
-    print("└" + "─" * 74)
+    # Keep track of the current command and explanation as they might change
+    current_command = command
+    current_explanation = explanation
 
     while True:
+        # STEP 1: Display the current suggestion
+        print("\n┌─ AI-Powered Terminal " + "─" * 53)
+        print(f"│\n│ Command:     {current_command}")
+        print(f"│ Explanation: {current_explanation}\n│")
+        print("└" + "─" * 74)
+
         choice = input("--> Execute? [Y]es, [N]o, [E]dit > ").lower()
-        
-        if choice in ['y', 'yes', '']: # Default to yes on Enter
-            break # Proceed to execute the original command
-        elif choice in ['e', 'edit']:
-            new_command = input(f"--> Edit command: `{command}` > ")
-            command = new_command if new_command else command # Keep original if input is empty
-            break # Proceed to execute the (potentially new) command
+
+        # STEP 2: Handle the user's choice
+        if choice in ['y', 'yes', '']:
+            # --- User chose YES ---
+            break  # Exit the loop to proceed with execution
+
         elif choice in ['n', 'no']:
+            # --- User chose NO ---
             print("--> Action cancelled.")
-            return # Exit the function, do nothing
+            return None # Exit the function entirely
+
+        elif choice in ['e', 'edit']:
+            # --- User chose EDIT (The new AI-powered logic) ---
+            modification_request = input("--> Edit: ")
+            if not modification_request:
+                print("--> Edit cancelled, no change described.")
+                continue # Ask for Y/N/E again for the same command
+
+            # Create a new, more detailed prompt for the AI
+            edit_prompt = (
+                f"The user's original request was: '{original_prompt}'.\n"
+                f"The generated command was: `{current_command}`.\n"
+                f"The user now wants to change something. Their change request is: '{modification_request}'\n\n"
+                f"Generate a new command based on the original request and the change."
+            )
+            
+            # print("--> Asking AI to revise the command...")
+            ai_response_str = get_ai_response(edit_prompt, "") # Send the new prompt to the AI
+            
+            try:
+                ai_response = json.loads(ai_response_str)
+                if ai_response.get("status") == "success":
+                    # If AI succeeds, update the command and explanation for the next loop
+                    current_command = ai_response.get("command")
+                    current_explanation = ai_response.get("explanation")
+                else:
+                    # If AI fails, inform the user and keep the current command
+                    print(f"--> AI could not process the edit: {ai_response.get('message', 'Unknown error')}")
+            except json.JSONDecodeError:
+                print(f"--> AI returned an invalid format for the edit. Raw Response: {ai_response_str}")
+            
+            # After the edit, the 'while' loop will automatically restart and show the NEW suggestion
+            continue
+
         else:
             print("--> Invalid choice. Please enter Y, N, or E.")
-    
-    # --- Execution Logic (moved from main loop) ---
-    print(f"--> Executing: `{command}`")
-    if command.strip().lower().startswith("cd "):
+
+    # STEP 3: Execute the final, confirmed command
+    print(f"--> Executing: `{current_command}`")
+    if current_command.strip().lower().startswith("cd "):
         try:
-            path = command.strip().split(" ", 1)[1]
+            path = current_command.strip().split(" ", 1)[1]
             if platform.system() == "Windows" and path.lower().startswith("/d "):
                 path = path[3:]
             os.chdir(path)
-            # This return value is used to update the conversation history
             return f"Current Directory: {os.getcwd()}"
         except FileNotFoundError:
             print(f"Error: Directory not found: {path}")
         except IndexError:
             print("Error: 'cd' command requires a directory path.")
     else:
-        execute_command(command)
+        execute_command(current_command)
     
-    # Return None if it wasn't a cd command
     return None
-
-# --- Core Functions ---
 
 def get_system_prompt():
     """Determines the current OS and returns the appropriate system prompt for the AI."""
@@ -237,10 +272,20 @@ def main():
                 continue
 
             if ai_response.get("status") == "incomplete":
-                clarification_prompt = input(f"AI: {ai_response.get('question')} > ")
-                conversation_history += f"\nUser: {prompt}\nAI: {ai_response.get('question')}\nUser: {clarification_prompt}"
+                # --- This is the new, formatted UI block for questions ---
+                question = ai_response.get('question')
+                print("\n┌─ Clarification Needed " + "─" * 54)
+                # This part is slightly different to better handle questions
+                print(f"│\n│ {question}\n│")
+                print("└" + "─" * 74)
+                clarification_prompt = input("--> ")
+                # --- End of new UI block ---
+                
+                # The rest of the logic remains the same
+                conversation_history += f"\nUser: {prompt}\nAI: {question}\nUser: {clarification_prompt}"
                 prompt = f"Original request was '{prompt}'. The user provided this missing info: '{clarification_prompt}'"
                 
+                print("--> Re-evaluating with new info...")
                 ai_response_str = get_ai_response(prompt, "") # Reset history for this turn
                 try:
                     ai_response = json.loads(ai_response_str)
@@ -252,11 +297,9 @@ def main():
                 command = ai_response.get("command")
                 explanation = ai_response.get("explanation")
 
-                new_cwd = confirm_and_execute(command, explanation)
+                new_cwd = confirm_and_execute(prompt, command, explanation)
                 if new_cwd:
                     conversation_history = new_cwd
-
-
 
             elif ai_response.get("status") == "error":
                     print(f"An error occurred: {ai_response.get('message')}")
