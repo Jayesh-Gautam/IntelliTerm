@@ -8,7 +8,7 @@ import json
 # IMPORTANT: Hardcoding keys is okay for personal projects, but for shared
 # or public code, using environment variables is more secure.
 API_KEY = "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" # Your key is placed here directly
-POWER_USER_MODE = True # Set to True to enable Power User Mode
+POWER_USER_MODE = False # Set to True to enable Power User Mode
 
 # This check ensures the key is not empty
 if not API_KEY:
@@ -247,10 +247,21 @@ def is_direct_command(prompt):
 
 def main():
     """Main application loop."""
-    print("IntelliTerm - The Natural Language Terminal")
+    # CORRECTED ASCII art that spells "IntelliTerm"
+    intro_art = r"""
+██╗███╗   ██╗████████╗███████╗██╗     ██╗     ████████╗███████╗██████╗ ███╗   ███╗
+██║████╗  ██║╚══██╔══╝██╔════╝██║     ██║     ╚══██╔══╝██╔════╝██╔══██╗████╗ ████║
+██║██╔██╗ ██║   ██║   █████╗  ██║     ██║        ██║   █████╗  ██████╔╝██╔████╔██║
+██║██║╚██╗██║   ██║   ██╔══╝  ██║     ██║        ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║
+██║██║ ╚████║   ██║   ███████╗███████╗███████╗   ██║   ███████╗██║  ██║██║ ╚═╝ ██║
+╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
+    """
+    print(intro_art)
+    print("Welcome to the AI-Powered Natural Language Terminal.")
+    print("You can type a command in plain English or a standard shell command.")
     print("Type 'exit' or 'quit' to close.")
-    print("-" * 40)
-    
+    print("-" * 70)
+
     conversation_history = f"Current Directory: {os.getcwd()}"
 
     while True:
