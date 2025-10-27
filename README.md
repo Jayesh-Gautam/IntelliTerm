@@ -71,16 +71,31 @@ You need a Groq API key to use the service.
 
 -----
 
-## 🔧 Configuration
+### 🔧 Configuration
 
-### Power User Mode
+#### ⚡ Power User Mode (Toggle Feature)
 
-IntelliTerm includes a special mode for advanced users that executes commands immediately without confirmation. To enable it, simply change the boolean variable at the top of the script:
+IntelliTerm includes a **Power User Mode** that can be **enabled or disabled directly through the terminal** 🖥️
 
-```python
-# Set to True to enable Power User Mode
-POWER_USER_MODE = True
+When **Power User Mode** is **enabled**, commands execute instantly ⚡ — no confirmation required — perfect for advanced users.
+When it’s **disabled**, IntelliTerm adds a confirmation step 🛡️ for safer command execution.
+
+You can toggle this mode anytime using the built-in command:
+
+```bash
+> toggle power
+Power User Mode: ENABLED ✅
 ```
+
+and to turn it off again:
+
+```bash
+> toggle power
+Power User Mode: DISABLED ❌
+```
+
+This simple toggle lets you switch between **safe mode** and **instant execution** without editing any code 🚀
+
 
 -----
 
