@@ -124,13 +124,12 @@ def _handle_uninstall():
     """
     Handle 'turn uninstall'.
 
-    Removes all configuration files from ~/.intelliterm and then
-    uninstalls the Python package via pip. Requires the user to
-    type 'confirm' to proceed.
+    Removes all configuration files from ~/.intelliterm. Does NOT uninstall
+    the package via pip to avoid Windows file-locking errors since the
+    process is currently running. Instructs the user to run pip manually.
     """
     ui.print_warning(
-        "This will remove IntelliTerm and all its configuration "
-        "from this machine."
+        "This will remove IntelliTerm's configuration from this machine."
     )
     confirm = ui.prompt_input("Type 'confirm' to proceed:")
 
@@ -140,23 +139,10 @@ def _handle_uninstall():
 
     # Remove config directory
     config.remove_config()
-    ui.print_info("Configuration files removed.")
-
-    # Uninstall the package
-    ui.print_info("Uninstalling package...")
-    import subprocess
-
-    result = subprocess.run(
-        [sys.executable, "-m", "pip", "uninstall", "intelliterm", "-y"],
-        capture_output=True,
-        text=True,
-    )
-
-    if result.returncode == 0:
-        ui.print_success("IntelliTerm has been uninstalled successfully.")
-    else:
-        ui.print_error(f"Failed to uninstall package: {result.stderr}")
-        ui.print_info("You can manually run: pip uninstall intelliterm")
+    ui.print_success("Configuration files removed successfully.")
+    
+    ui.print_info("\nTo complete the uninstall, run this command:")
+    ui.print_output("pip uninstall -y intelliterm", "")
 
 
 def _handle_one_shot(args):
