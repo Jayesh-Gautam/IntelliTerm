@@ -81,6 +81,14 @@ def get_system_prompt():
     6. Special rule for Windows directory changes: when changing to a
        directory on a DIFFERENT drive, always use `cd /d`.
        Example: `cd /d D:\\projects`.
+
+    7. CRITICAL: In Windows CMD shell, do NOT use symbols like `>=`, `<=`,
+       `>`, `<` for numeric comparisons in 'if' statements. These are
+       interpreted as redirection operators. ALWAYS use the mnemonic
+       operators: `GEQ` (Greater or Equal), `LEQ` (Less or Equal),
+       `GTR` (Greater Than), `LSS` (Less Than), `EQU` (Equal),
+       `NEQ` (Not Equal).
+       Example: `if %~zx GEQ 100000000 echo %x`
     """
     return prompt
 

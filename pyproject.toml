@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-turn = "intelliterm.main:app"
+iterm-internal = "intelliterm.main:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]

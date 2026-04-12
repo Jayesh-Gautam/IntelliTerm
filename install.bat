@@ -13,7 +13,7 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-echo [1/2] Installing IntelliTerm...
+echo [1/3] Installing IntelliTerm package...
 pip install .
 if %errorlevel% neq 0 (
     echo.
@@ -23,16 +23,36 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo [2/2] Setup complete.
+echo [2/3] Setting up shell wrapper (for persistent CD support)...
+for /f "delims=" %%i in ('python -c "import sysconfig; print(sysconfig.get_path('scripts'))"') do set "SCRIPTS_DIR=%%i"
+
+if not exist "%SCRIPTS_DIR%" (
+    echo ERROR: Could not find Python scripts directory.
+    pause
+    exit /b 1
+)
+
+copy /y "src\intelliterm\turn_wrapper.bat" "%SCRIPTS_DIR%\turn.bat" >nul
+if %errorlevel% neq 0 (
+    echo ERROR: Failed to create turn.bat wrapper in %SCRIPTS_DIR%.
+    pause
+    exit /b 1
+)
+
+echo.
+echo [3/3] Checking PATH...
+powershell -Command "$p = [Environment]::GetEnvironmentVariable('Path', 'User'); if ($p -notlike '*%SCRIPTS_DIR%*') { [Environment]::SetEnvironmentVariable('Path', $p + ';%SCRIPTS_DIR%', 'User'); Write-Host 'Added %SCRIPTS_DIR% to user PATH.' -ForegroundColor Cyan } else { Write-Host 'PATH is already correctly configured.' }"
+
 echo.
 echo ============================================
-echo  IntelliTerm has been installed.
+echo  IntelliTerm Setup Complete!
 echo ============================================
+echo.
+echo IMPORTANT: If this is your first install, please RESTART
+echo your terminal (CMD or PowerShell) to activate the 'turn' command.
 echo.
 echo Next steps:
-echo   1. Get a free API key from: https://console.groq.com/keys
-echo   2. Run: turn config set-key YOUR_API_KEY
-echo   3. Try:  turn list all files in this directory
-echo   4. Or:   turn shell   (for interactive mode)
+echo   1. Run:  turn config set-key YOUR_API_KEY
+echo   2. Try:  turn list all files
 echo.
 pause

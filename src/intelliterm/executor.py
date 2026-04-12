@@ -92,6 +92,10 @@ def handle_cd(path):
     On Windows, the '/d' flag is stripped automatically since
     os.chdir handles cross-drive changes natively.
 
+    To support persistent directory changes in the parent shell,
+    a successful 'cd' writes the target path to ~/.intelliterm/last_cd
+    which can be picked up by a shell wrapper.
+
     Args:
         path: The target directory path.
 
@@ -105,6 +109,15 @@ def handle_cd(path):
 
         path = path.strip().strip('"').strip("'")
         os.chdir(path)
+
+        # Write to last_cd hook for shell wrappers
+        from pathlib import Path
+        hook_dir = Path.home() / ".intelliterm"
+        hook_dir.mkdir(parents=True, exist_ok=True)
+        hook_path = hook_dir / "last_cd"
+        with open(hook_path, "w", encoding="utf-8") as f:
+            f.write(os.getcwd())
+
         return True, f"Changed directory to: {os.getcwd()}"
     except FileNotFoundError:
         return False, f"Directory not found: {path}"
