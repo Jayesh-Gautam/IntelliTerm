@@ -247,42 +247,48 @@ def app():
     on the first argument. If no arguments match a known subcommand,
     all arguments are treated as a natural language query.
     """
-    args = sys.argv[1:]
+    try:
+        args = sys.argv[1:]
 
-    # No arguments: show help
-    if not args:
-        print(HELP_TEXT)
-        return
+        # No arguments: show help
+        if not args:
+            print(HELP_TEXT)
+            return
 
-    first = args[0].lower()
+        first = args[0].lower()
 
-    # Flags
-    if first in ("--help", "-h"):
-        print(HELP_TEXT)
-        return
+        # Flags
+        if first in ("--help", "-h"):
+            print(HELP_TEXT)
+            return
 
-    if first in ("--version", "-v"):
-        print(f"IntelliTerm v{__version__}")
-        return
+        if first in ("--version", "-v"):
+            print(f"IntelliTerm v{__version__}")
+            return
 
-    # Subcommands
-    if first == "shell":
-        from . import shell
+        # Subcommands
+        if first == "shell":
+            from . import shell
 
-        shell.run()
-        return
+            shell.run()
+            return
 
-    if first == "config":
-        _handle_config(args[1:])
-        return
+        if first == "config":
+            _handle_config(args[1:])
+            return
 
-    if first == "history":
-        _handle_history(args[1:])
-        return
+        if first == "history":
+            _handle_history(args[1:])
+            return
 
-    if first == "uninstall":
-        _handle_uninstall()
-        return
+        if first == "uninstall":
+            _handle_uninstall()
+            return
 
-    # Default: treat everything as a natural language query
-    _handle_one_shot(args)
+        # Default: treat everything as a natural language query
+        _handle_one_shot(args)
+        
+    except KeyboardInterrupt:
+        ui.console.print()
+        ui.print_info("Action cancelled.")
+        sys.exit(0)
