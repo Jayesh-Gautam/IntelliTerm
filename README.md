@@ -1,11 +1,9 @@
 # IntelliTerm
 
-A natural language terminal that translates plain English into
-executable shell commands. Powered by the Groq API for high-speed
-inference.
+IntelliTerm is a productivity-first, open-source command-line tool designed to bridge the gap between natural language and terminal execution. Built for developers who want to spend less time searching for obscure shell syntax and more time writing code, IntelliTerm uses high-speed AI to translate your intent into precise, executable commands.
 
-Type what you want to do, and IntelliTerm will figure out the right
-command, explain it, and run it for you.
+### The Philosophy
+The terminal is the most powerful tool in a developer's arsenal, but its steep learning curve and inconsistent syntax across operating systems can be a bottleneck. IntelliTerm doesn't replace the shell; it augments it. By providing a hybrid interface that understands both standard shell commands and plain English, it empowers developers to master their environment without the cognitive load of memorizing every flag for every utility.
 
 ---
 
