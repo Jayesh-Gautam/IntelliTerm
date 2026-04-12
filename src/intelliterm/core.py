@@ -89,6 +89,17 @@ def get_system_prompt():
        `GTR` (Greater Than), `LSS` (Less Than), `EQU` (Equal),
        `NEQ` (Not Equal).
        Example: `if %~zx GEQ 100000000 echo %x`
+
+    8. RECURSION: By default, file search or listing requests (e.g., "find
+       all python files") should be performed RECURSIVELY (searching
+       subdirectories) unless the user explicitly says "in this folder
+       only".
+
+    9. POWERSHELL ON WINDOWS: For complex Windows operations (like
+       filtering files by size, date, or advanced patterns), prefer
+       generating a `powershell` command over a complex CMD one-liner.
+       PowerShell is more reliable and robust for these tasks.
+       Example for files > 100MB: `powershell "Get-ChildItem -Recurse | Where-Object {$_.Length -gt 100mb} | Select-Object FullName"`
     """
     return prompt
 
