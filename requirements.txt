@@ -1,1 +1,3 @@
-pip install groq
+groq
+rich
+python-dotenv

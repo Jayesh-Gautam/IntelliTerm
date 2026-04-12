@@ -1,168 +1,201 @@
-# IntelliTerm: The Natural Language Terminal 🚀
+# IntelliTerm
 
+A natural language terminal that translates plain English into
+executable shell commands. Powered by the Groq API for high-speed
+inference.
 
-
-**IntelliTerm** is an intelligent, hybrid command-line interface that allows you to execute shell commands by typing in plain English. Powered by the Groq API for high-speed inference, it translates your natural language requests into executable commands for both Windows (CMD) and Unix-like systems (Bash).
-
-This project goes beyond a simple translator by creating a rich, interactive shell experience. It intelligently decides when to use AI and when to act as a traditional shell, giving you the best of both worlds.
-
----
-
-## 🌟 Features
-
-* **Natural Language Processing**: Simply type what you want to do, like *"create a new folder called 'docs'"* or *"find all text files in this directory"*.
-
-* **Polished Interactive UI**: All interactions, from command suggestions to clarification questions, are presented in a clean, professional, and consistent interface.
-
-* **Direct Command Execution**: IntelliTerm is a **hybrid shell**. It recognizes standard commands (like `dir`, `ls`, `git`, `pip`) and executes them immediately, bypassing the AI for maximum speed and familiar control.
-
-* **AI-Powered Editing**: Made a typo or changed your mind? The 'Edit' feature allows you to provide a correction in plain English (e.g., *"change the name to 'final_report'"*), and the AI will intelligently revise the command for you.
-
-* **Power User Mode**: For advanced users who prioritize speed, a special **Power User Mode** can be enabled. This mode executes all AI-generated commands instantly without requiring confirmation.
-
-* **Cross-Platform Support**: Automatically detects your OS (Windows, macOS, or Linux) and generates the appropriate command.
-
-* **Contextual Clarification**: If your request is ambiguous, the AI will ask for the necessary information in a structured prompt to ensure it gets the command right.
+Type what you want to do, and IntelliTerm will figure out the right
+command, explain it, and run it for you.
 
 ---
 
-## 🛠️ Technologies Used
+## Quick Start
 
-* **Python 3**
-* **Groq API** for fast Language Model inference.
-* **Standard Libraries**: `os`, `platform`, `subprocess`, `json`
+### One-Command Install
 
----
-
-## ⚙️ Setup and Installation
-
-Follow these steps to get IntelliTerm running on your local machine.
-
-### 1. Clone the Repository
-```bash
+**Windows:**
+```
 git clone https://github.com/Jayesh-Gautam/IntelliTerm.git
 cd IntelliTerm
-````
-
-### 2\. Install Dependencies
-
-It's recommended to use a virtual environment.
-
-```bash
-# Create a virtual environment
-python -m venv venv
-
-# Activate it
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-# Install the required packages
-pip install groq
+install.bat
 ```
 
-### 3\. Configure API Key
-
-You need a Groq API key to use the service.
-
-1.  Get your free API key from the **[Groq Console](https://console.groq.com/keys)**.
-2.  Open the script and paste your key into the `API_KEY` variable.
-
------
-
-## 🔧 Configuration
-
-### Power User Mode
-
-IntelliTerm includes a special mode for advanced users that executes commands immediately without confirmation. To enable it, simply change the boolean variable at the top of the script:
-
-```python
-# Set to True to enable Power User Mode
-POWER_USER_MODE = True
+**Linux / macOS:**
+```
+git clone https://github.com/Jayesh-Gautam/IntelliTerm.git
+cd IntelliTerm
+chmod +x install.sh && ./install.sh
 ```
 
------
+### Set Your API Key
 
-## ▶️ How to Run
-
-Once you have completed the setup, run the script from your terminal:
-
-```bash
-python IntelliTerm.py
-```
-
-The application will start, and you can begin typing commands.
-
------
-
-## 📝 Example Usage
-
-### Example 1: Creating a File
-
-The AI suggests a command and waits for your confirmation.
+Get a free key from the [Groq Console](https://console.groq.com/keys),
+then run:
 
 ```
-C:\Users\You> create a new empty file called report.docx
-
-┌─ AI-Powered Terminal ─────────────────────────────────────────────────────
-│
-│ Command:     type nul > report.docx
-│ Explanation: This command creates an empty file named 'report.docx'.
-│
-└──────────────────────────────────────────────────────────────────────────
---> Execute? [Y]es, [N]o, [E]dit >
+turn config set-key YOUR_API_KEY
 ```
 
-### Example 2: AI-Powered Editing
-
-After getting a suggestion, you can ask the AI to modify it.
+### Start Using It
 
 ```
-C:\Users\You> make a folder for my new project
-
-┌─ AI-Powered Terminal ─────────────────────────────────────────────────────
-│
-│ Command:     mkdir "new project"
-│ Explanation: This command creates a new directory named 'new project'.
-│
-└──────────────────────────────────────────────────────────────────────────
---> Execute? [Y]es, [N]o, [E]dit > e
---> Describe your change: actually, name it "Project Alpha"
-
---> Asking AI to revise the command...
-
-┌─ AI-Powered Terminal ─────────────────────────────────────────────────────
-│
-│ Command:     mkdir "Project Alpha"
-│ Explanation: This command creates a new directory named 'Project Alpha'.
-│
-└──────────────────────────────────────────────────────────────────────────
---> Execute? [Y]es, [N]o, [E]dit >
+turn list all files larger than 100mb
+turn find all python files modified today
+turn create a zip archive of the src folder
+turn show disk usage by folder
 ```
 
-### Example 3: Handling Ambiguity
+---
 
-The AI asks for more information in a clean, structured way.
-cl
+## Features
+
+**Natural Language Commands** --
+Type what you want in plain English. IntelliTerm translates it into
+the correct shell command for your OS (Windows CMD or Bash).
+
+**Two Modes** --
+Use `turn <query>` for quick one-shot commands, or `turn shell` for
+a full interactive session.
+
+**Command Review** --
+Every AI-generated command is shown with an explanation before
+execution. You choose: Yes, No, or Edit.
+
+**AI-Powered Editing** --
+Not happy with the suggestion? Choose Edit and describe what to
+change in English. The AI revises the command.
+
+**Dangerous Command Detection** --
+Commands like `rm -rf`, `format`, or `del /s` trigger a red warning
+and require explicit confirmation, even in Power User Mode.
+
+**Command History** --
+All executed commands are saved. View them with `turn history` or
+clear them with `turn history clear`.
+
+**Power User Mode** --
+Skip the confirmation prompt and execute AI commands instantly.
+Enable with: `turn config power-mode on`
+
+**Direct Command Passthrough** --
+Standard commands like `git`, `pip`, `ls`, `dir`, `cd` are detected
+and executed immediately without AI translation.
+
+**Cross-Platform** --
+Automatically detects Windows, macOS, or Linux and generates the
+appropriate commands.
+
+**Easy Uninstall** --
+Remove everything cleanly with: `turn uninstall`
+
+---
+
+## Command Reference
+
+| Command | Description |
+|---|---|
+| `turn <query>` | Translate and execute a single command |
+| `turn shell` | Launch interactive shell mode |
+| `turn config set-key <key>` | Set your Groq API key |
+| `turn config show` | Show current configuration |
+| `turn config set-model <model>` | Change the AI model |
+| `turn config power-mode on\|off` | Toggle power user mode |
+| `turn history` | Show recent command history |
+| `turn history clear` | Clear all history |
+| `turn uninstall` | Remove IntelliTerm completely |
+| `turn --help` | Show help |
+| `turn --version` | Show version |
+
+---
+
+## Example: One-Shot Mode
+
 ```
-C:\Users\You> I need to make a new item
+C:\Users\You> turn create a new folder called docs
 
-┌─ Clarification Needed ────────────────────────────────────────────────────
-│
-│ Please clarify whether you want to create a file or a folder.
-│
-└──────────────────────────────────────────────────────────────────────────
---> Response: a file named 'config'
++-------------------------------------------------+
+| Command Suggestion                              |
+|                                                 |
+| Command:     mkdir docs                         |
+| Explanation: Creates a new directory named docs. |
++-------------------------------------------------+
+
+>>> Execute? [Y]es [N]o [E]dit > y
+>>> Executing: mkdir docs
 ```
 
------
+## Example: Interactive Shell
 
-## 💡 Future Improvements
+```
+C:\Users\You> turn shell
 
-  * **Command History**: Implement up/down arrow functionality to cycle through previous commands.
-  * **Alias Support**: Allow users to define their own custom shortcuts.
-  * **Tab Completion**: Add auto-completion for file and directory names.
+ ___ _  _ _____ ___ _    _    ___ _____ ___ ___ __  __
+|_ _| \| |_   _| __| |  | |  |_ _|_   _| __| _ \  \/  |
+ | || .` | | | | _|| |__| |__ | |  | | | _||   / |\/| |
+|___|_|\_| |_| |___|____|____|___| |_| |___|_|_\_|  |_|
 
-<!-- end list -->
+  Natural Language Terminal v2.0
+  Type a command in plain English or use standard shell commands.
+  Type 'exit' or 'quit' to close.
 
+C:\Users\You> git status
+>>> Direct command detected. Executing...
+
+C:\Users\You> show me all jpg files larger than 5mb
+>>> Thinking...
++-------------------------------------------------+
+| Command Suggestion                              |
+|                                                 |
+| Command:     forfiles /S /M *.jpg ...           |
+| Explanation: Searches for JPG files over 5MB.   |
++-------------------------------------------------+
+>>> Execute? [Y]es [N]o [E]dit >
+```
+
+---
+
+## Configuration
+
+All configuration is stored in `~/.intelliterm/config.env`. You can
+edit this file directly or use the `turn config` commands.
+
+Available settings:
+
+| Setting | Default | Description |
+|---|---|---|
+| GROQ_API_KEY | (none) | Your Groq API key |
+| GROQ_MODEL | llama-3.3-70b-versatile | The AI model to use |
+| POWER_USER_MODE | false | Skip confirmation prompts |
+
+---
+
+## Technologies
+
+- **Python 3.8+**
+- **Groq API** -- Fast LLM inference
+- **Rich** -- Terminal colors, panels, spinners, and tables
+- **python-dotenv** -- Environment file management
+
+---
+
+## Uninstall
+
+To completely remove IntelliTerm and all its configuration:
+
+```
+turn uninstall
+```
+
+Or manually:
+
+```
+pip uninstall intelliterm
+```
+
+Then delete the config folder at `~/.intelliterm/`.
+
+---
+
+## License
+
+MIT

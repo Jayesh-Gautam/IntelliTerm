@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intelliterm"
+version = "2.0.0"
+description = "A natural language terminal - translate English to shell commands using AI"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Jayesh Gautam"},
+]
+dependencies = [
+    "groq",
+    "rich",
+    "python-dotenv",
+]
+
+[project.scripts]
+turn = "intelliterm.main:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
