@@ -99,7 +99,7 @@ def get_system_prompt():
        filtering files by size, date, or advanced patterns), prefer
        generating a `powershell` command over a complex CMD one-liner.
        PowerShell is more reliable and robust for these tasks.
-       Example for files > 100MB: `powershell "Get-ChildItem -Recurse | Where-Object {$_.Length -gt 100mb} | Select-Object FullName"`
+       Example for files > 100MB: `powershell "Get-ChildItem -Recurse | Where-Object {{$_.Length -gt 100mb}} | Select-Object FullName"`
     """
     return prompt
 
